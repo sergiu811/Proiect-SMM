@@ -79,15 +79,14 @@ void processInput(GLFWwindow* window);
 //textures
 void renderFloor(const Shader& shader);
 void renderWallRoom(const Shader& shader);
-
 void renderBackground1(const Shader& shader);
 void renderBackground2(const Shader& shader);
-
+void renderDino1(const Shader& shader);
 
 //objects
 void renderFloor();
 void renderBackground();
-
+void renderDino1();
 
 //room
 void renderWall1();
@@ -171,6 +170,7 @@ int main(int argc, char** argv)
 
 	unsigned int floorTexture = CreateTexture(strExePath + "\\floor.jpg");
 	unsigned int wallTexture = CreateTexture(strExePath + "\\wall.jpg");
+	unsigned int dino1 = CreateTexture(strExePath + "\\tietu.jpg");
 
 
 	// configure depth map FBO
@@ -273,6 +273,17 @@ int main(int argc, char** argv)
 		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, dino1);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderDino1(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 
 		// reset viewport
@@ -320,6 +331,14 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		glDisable(GL_CULL_FACE);
 		renderBackground2(shadowMappingShader);
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, dino1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderDino1(shadowMappingShader);
 
 		//end
 
@@ -473,6 +492,24 @@ void renderBackground2(const Shader& shader)
 	renderBackground();
 }
 
+void renderDino1(const Shader& shader)
+{
+	//dino
+	glm::mat4 model;
+
+	static float Offset = 0.0f;
+	const float Increment = 0.005f;
+	Offset += Increment;
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-8.5f, -0.5f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.4f));
+	model = glm::rotate(model, Offset, glm::vec3(0, 1, 0));
+	shader.SetMat4("model", model);
+	renderDino1();
+
+
+}
 
 unsigned int planeVAO = 0;
 void renderFloor()
@@ -1365,6 +1402,88 @@ void renderBackground()
 	glBindVertexArray(backgroundVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, backgroundVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, backgroundEBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
+unsigned int indicesDT3[720000];
+objl::Vertex verDT3[900000];
+
+GLuint dino1VAO, dino1VBO, dino1EBO;
+void renderDino1()
+{
+	// initialize (if necessary)
+	if (dino1VAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\dinosaur.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verDT3[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesDT3[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &dino1VAO);
+		glGenBuffers(1, &dino1VBO);
+		glGenBuffers(1, &dino1EBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, dino1VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verDT3), verDT3, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dino1EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesDT3), &indicesDT3, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(dino1VAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(dino1VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, dino1VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dino1EBO);
 	int indexArraySize;
 	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
 	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
