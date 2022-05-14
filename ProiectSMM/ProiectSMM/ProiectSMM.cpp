@@ -1,20 +1,1435 @@
-// ProiectSMM.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+#include <stdlib.h> // necesare pentru citirea shaderStencilTesting-elor
+#include <stdio.h>
+#include <math.h> 
+#include <GL/glew.h>
+
+#define GLM_FORCE_CTOR_INIT 
+#include <GLM.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
+#include <glfw3.h>
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
-int main()
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#include "OBJ_Loader.h"
+#pragma comment (lib, "glfw3dll.lib")
+#pragma comment (lib, "glew32.lib")
+#pragma comment (lib, "OpenGL32.lib")
+
+#include "Camera.h"
+#include "Shader.h"
+
+// settings
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
+objl::Loader Loader;
+
+
+bool rot = false;
+
+Camera* pCamera = nullptr;
+
+unsigned int CreateTexture(const std::string& strTexturePath)
 {
-    std::cout << "Hello World!\n";
+	unsigned int textureId = -1;
+
+	// load image, create texture and generate mipmaps
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+	unsigned char* data = stbi_load(strTexturePath.c_str(), &width, &height, &nrChannels, 0);
+	if (data) {
+		GLenum format;
+		if (nrChannels == 1)
+			format = GL_RED;
+		else if (nrChannels == 3)
+			format = GL_RGB;
+		else if (nrChannels == 4)
+			format = GL_RGBA;
+
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		// set the texture wrapping parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	else {
+		std::cout << "Failed to load texture: " << strTexturePath << std::endl;
+	}
+	stbi_image_free(data);
+
+	return textureId;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void processInput(GLFWwindow* window);
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+//textures
+void renderFloor(const Shader& shader);
+void renderWallRoom(const Shader& shader);
+
+void renderBackground1(const Shader& shader);
+void renderBackground2(const Shader& shader);
+
+
+//objects
+void renderFloor();
+void renderBackground();
+
+
+//room
+void renderWall1();
+void renderWall2();
+void renderWall3();
+void renderWall4();
+void renderWall5();
+
+void renderWall6();
+void renderWall7();
+void renderWall8();
+void renderWall9();
+void renderWall10();
+
+
+// timing
+double deltaTime = 0.0f;    // time between current frame and last frame
+double lastFrame = 0.0f;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_L && action == GLFW_PRESS)
+	{
+		rot = true;
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
+		rot = false;
+	}
+
+}
+
+int main(int argc, char** argv)
+{
+	std::string strFullExeFileName = argv[0];
+	std::string strExePath;
+	const size_t last_slash_idx = strFullExeFileName.rfind('\\');
+	if (std::string::npos != last_slash_idx) {
+		strExePath = strFullExeFileName.substr(0, last_slash_idx);
+	}
+
+	// glfw: initialize and configure
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	// glfw window creation
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Proiect SMM", NULL, NULL);
+	if (window == NULL) {
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetKeyCallback(window, key_callback);
+	// tell GLFW to capture our mouse
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	glewInit();
+
+
+
+	// Create camera
+	pCamera = new Camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0, 1.0, 3.0));
+
+	// configure global opengl state
+	// -----------------------------
+	glEnable(GL_DEPTH_TEST);
+
+	// build and compile shaders
+	// -------------------------
+	Shader shadowMappingShader("..\\Shaders\\ShadowMapping.vs", "..\\Shaders\\ShadowMapping.fs");
+	Shader shadowMappingDepthShader("..\\Shaders\\ShadowMappingDepth.vs", "..\\Shaders\\ShadowMappingDepth.fs");
+
+	// load textures
+
+	unsigned int floorTexture = CreateTexture(strExePath + "\\floor.jpg");
+	unsigned int wallTexture = CreateTexture(strExePath + "\\wall.jpg");
+
+
+	// configure depth map FBO
+	// -----------------------
+	const unsigned int SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
+	unsigned int depthMapFBO;
+	glGenFramebuffers(1, &depthMapFBO);
+	// create depth texture
+	unsigned int depthMap;
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	// attach depth texture as FBO's depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	// shader configuration
+	// --------------------
+	shadowMappingShader.Use();
+	shadowMappingShader.SetInt("diffuseTexture", 0);
+	shadowMappingShader.SetInt("shadowMap", 1);
+
+	// lighting info
+	// -------------
+	glm::vec3 lightPos(-25.0f, 6.0f, -1.0f);
+
+	glEnable(GL_CULL_FACE);
+
+	// render loop
+	// -----------
+	while (!glfwWindowShouldClose(window))
+	{
+		// per-frame time logic
+		// --------------------
+		float currentFrame = (float)glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		if (rot)
+		{
+			lightPos.x = 3.0 * sin(currentFrame);
+			lightPos.z = 3.0 * cos(currentFrame);
+
+		}
+
+		// input
+		// -----
+		processInput(window);
+
+		// render
+		// ------
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+
+		// 1. render depth of scene to texture (from light's perspective)
+		glm::mat4 lightProjection, lightView;
+		glm::mat4 lightSpaceMatrix;
+		float near_plane = 1.0f, far_plane = 7.5f;
+		lightProjection = glm::ortho(10.0f, -10.0f, -10.0f, 10.0f, near_plane, far_plane);
+		lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+		lightSpaceMatrix = lightProjection * lightView;
+
+		// render scene from light's point of view
+		shadowMappingDepthShader.Use();
+		shadowMappingDepthShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, floorTexture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderFloor(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, wallTexture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderWallRoom(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
+		// reset viewport
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// 2. render scene as normal using the generated depth/shadow map 
+		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		shadowMappingShader.Use();
+		glm::mat4 projection = pCamera->GetProjectionMatrix();
+		glm::mat4 view = pCamera->GetViewMatrix();
+		shadowMappingShader.SetMat4("projection", projection);
+		shadowMappingShader.SetMat4("view", view);
+		// set light uniforms
+		shadowMappingShader.SetVec3("viewPos", pCamera->GetPosition());
+		shadowMappingShader.SetVec3("lightPos", lightPos);
+		shadowMappingShader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, floorTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderFloor(shadowMappingShader);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, wallTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderWallRoom(shadowMappingShader);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, wallTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderBackground1(shadowMappingShader);
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, wallTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderBackground2(shadowMappingShader);
+
+		//end
+
+
+
+				// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	// optional: de-allocate all resources once they've outlived their purpose:
+	delete pCamera;
+
+	glfwTerminate();
+	return 0;
+}
+
+// renders the 3D scene
+// --------------------
+void renderFloor(const Shader& shader)
+{
+	// floor
+	glm::mat4 model;
+	shader.SetMat4("model", model);
+	renderFloor();
+
+	model = glm::translate(model, glm::vec3(-50.0f, 0.0f, 0.0f));
+	shader.SetMat4("model", model);
+	renderFloor();
+
+}
+
+
+void renderWallRoom(const Shader& shader)
+{
+	//first
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall1();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall2();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall3();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall4();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall5();
+
+	//second
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-97.0f, -1.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall6();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-50.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall7();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-50.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall8();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-50.0f, -1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(2.f));
+	shader.SetMat4("model", model);
+	renderWall9();
+
+
+}
+
+
+
+void renderBackground1(const Shader& shader)
+{
+	//background2
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-49.3f, 9.9f, -22.30f));
+	model = glm::scale(model, glm::vec3(6.0f));
+	shader.SetMat4("model", model);
+	renderBackground();
+}
+
+void renderBackground2(const Shader& shader)
+{
+	//background2
+
+	glm::mat4 model;
+
+	//1
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-25.8f, -1.0f, -24.30f));
+	model = glm::scale(model, glm::vec3(3.99f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.SetMat4("model", model);
+	renderBackground();
+
+	//2
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-25.8f, -1.0f, 24.30f));
+	model = glm::scale(model, glm::vec3(3.99f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.SetMat4("model", model);
+	renderBackground();
+
+	//3
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-24.0f, -1.0f, -24.30f));
+	model = glm::scale(model, glm::vec3(3.99f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.SetMat4("model", model);
+	renderBackground();
+
+	//4
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-24.0f, -1.0f, 24.30f));
+	model = glm::scale(model, glm::vec3(3.99f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.SetMat4("model", model);
+	renderBackground();
+}
+
+
+unsigned int planeVAO = 0;
+void renderFloor()
+{
+	unsigned int planeVBO;
+
+	if (planeVAO == 0) {
+		// set up vertex data (and buffer(s)) and configure vertex attributes
+		float planeVertices[] = {
+			// positions            // normals         // texcoords
+			25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+			-25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+			-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+
+			25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
+			-25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  0.0f, 25.0f,
+			25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
+		};
+		// plane VAO
+		glGenVertexArrays(1, &planeVAO);
+		glGenBuffers(1, &planeVBO);
+		glBindVertexArray(planeVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindVertexArray(0);
+	}
+
+	glBindVertexArray(planeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+
+
+float vertices[82000];
+unsigned int indices[72000];
+
+GLuint floorVAO, floorVBO, floorEBO;
+
+GLuint floorVAO1, floorVBO1, floorEBO1;
+void renderWall1()
+{
+	// initialize (if necessary)
+	if (floorVAO1 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		for (int i = 0; i < Loader.LoadedMeshes.size(); i++)
+		{
+			objl::Mesh curMesh = Loader.LoadedMeshes[1];
+			int size = curMesh.Vertices.size();
+
+			for (int j = 0; j < curMesh.Vertices.size(); j++)
+			{
+
+				verticess.push_back((float)curMesh.Vertices[j].Position.X);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+			}
+			for (int j = 0; j < verticess.size(); j++)
+			{
+				vertices[j] = verticess.at(j);
+			}
+
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+
+				indicess.push_back((float)curMesh.Indices[j]);
+
+			}
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+				indices[j] = indicess.at(j);
+			}
+		}
+		glGenVertexArrays(1, &floorVAO1);
+		glGenBuffers(1, &floorVBO1);
+		glGenBuffers(1, &floorEBO1);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO1);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO1);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO1);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO1);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO1);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO1);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+void renderWall6()
+{
+	// initialize (if necessary)
+	if (floorVAO1 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		for (int i = 0; i < Loader.LoadedMeshes.size(); i++)
+		{
+			objl::Mesh curMesh = Loader.LoadedMeshes[1];
+			int size = curMesh.Vertices.size();
+
+			for (int j = 0; j < curMesh.Vertices.size(); j++)
+			{
+
+				verticess.push_back((float)curMesh.Vertices[j].Position.X);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+			}
+			for (int j = 0; j < verticess.size(); j++)
+			{
+				vertices[j] = verticess.at(j);
+			}
+
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+
+				indicess.push_back((float)curMesh.Indices[j]);
+
+			}
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+				indices[j] = indicess.at(j);
+			}
+		}
+		glGenVertexArrays(1, &floorVAO1);
+		glGenBuffers(1, &floorVBO1);
+		glGenBuffers(1, &floorEBO1);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO1);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO1);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO1);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO1);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO1);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO1);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+GLuint floorVAO2, floorVBO2, floorEBO2;
+void renderWall2()
+{
+	// initialize (if necessary)
+	if (floorVAO2 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		for (int i = 0; i < Loader.LoadedMeshes.size(); i++)
+		{
+			objl::Mesh curMesh = Loader.LoadedMeshes[2];
+			int size = curMesh.Vertices.size();
+
+			for (int j = 0; j < curMesh.Vertices.size(); j++)
+			{
+
+				verticess.push_back((float)curMesh.Vertices[j].Position.X);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+			}
+			for (int j = 0; j < verticess.size(); j++)
+			{
+				vertices[j] = verticess.at(j);
+			}
+
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+
+				indicess.push_back((float)curMesh.Indices[j]);
+
+			}
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+				indices[j] = indicess.at(j);
+			}
+		}
+		glGenVertexArrays(1, &floorVAO2);
+		glGenBuffers(1, &floorVBO2);
+		glGenBuffers(1, &floorEBO2);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO2);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO2);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO2);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO2);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO2);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+void renderWall7()
+{
+	// initialize (if necessary)
+	if (floorVAO2 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		for (int i = 0; i < Loader.LoadedMeshes.size(); i++)
+		{
+			objl::Mesh curMesh = Loader.LoadedMeshes[2];
+			int size = curMesh.Vertices.size();
+
+			for (int j = 0; j < curMesh.Vertices.size(); j++)
+			{
+
+				verticess.push_back((float)curMesh.Vertices[j].Position.X);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+				verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+				verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+			}
+			for (int j = 0; j < verticess.size(); j++)
+			{
+				vertices[j] = verticess.at(j);
+			}
+
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+
+				indicess.push_back((float)curMesh.Indices[j]);
+
+			}
+			for (int j = 0; j < curMesh.Indices.size(); j++)
+			{
+				indices[j] = indicess.at(j);
+			}
+		}
+		glGenVertexArrays(1, &floorVAO2);
+		glGenBuffers(1, &floorVBO2);
+		glGenBuffers(1, &floorEBO2);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO2);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO2);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO2);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO2);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO2);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+GLuint floorVAO3, floorVBO3, floorEBO3;
+void renderWall3()
+{
+	// initialize (if necessary)
+	if (floorVAO3 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[3];
+		int size = curMesh.Vertices.size();
+
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+
+			verticess.push_back((float)curMesh.Vertices[j].Position.X);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indices[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &floorVAO3);
+		glGenBuffers(1, &floorVBO3);
+		glGenBuffers(1, &floorEBO3);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO3);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO3);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO3);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO3);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO3);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+void renderWall8()
+{
+	// initialize (if necessary)
+	if (floorVAO3 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[3];
+		int size = curMesh.Vertices.size();
+
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+
+			verticess.push_back((float)curMesh.Vertices[j].Position.X);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indices[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &floorVAO3);
+		glGenBuffers(1, &floorVBO3);
+		glGenBuffers(1, &floorEBO3);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO3);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO3);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO3);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO3);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO3);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+GLuint floorVAO4, floorVBO4, floorEBO4;
+void renderWall4()
+{
+	// initialize (if necessary)
+	if (floorVAO4 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[4];
+		int size = curMesh.Vertices.size();
+
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+
+			verticess.push_back((float)curMesh.Vertices[j].Position.X);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indices[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &floorVAO4);
+		glGenBuffers(1, &floorVBO4);
+		glGenBuffers(1, &floorEBO4);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO4);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO4);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO4);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO4);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO4);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO4);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+void renderWall9()
+{
+	// initialize (if necessary)
+	if (floorVAO4 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[4];
+		int size = curMesh.Vertices.size();
+
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+
+			verticess.push_back((float)curMesh.Vertices[j].Position.X);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indices[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &floorVAO4);
+		glGenBuffers(1, &floorVBO4);
+		glGenBuffers(1, &floorEBO4);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO4);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO4);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO4);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO4);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO4);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO4);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+GLuint floorVAO5, floorVBO5, floorEBO5;
+void renderWall5()
+{
+	// initialize (if necessary)
+	if (floorVAO5 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[5];
+		int size = curMesh.Vertices.size();
+
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+
+			verticess.push_back((float)curMesh.Vertices[j].Position.X);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indices[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &floorVAO5);
+		glGenBuffers(1, &floorVBO5);
+		glGenBuffers(1, &floorEBO5);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO5);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO5);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO5);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO5);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO5);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO5);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+}
+
+void renderWall10()
+{
+	// initialize (if necessary)
+	if (floorVAO5 == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+		Loader.LoadFile("..\\OBJ\\room.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[5];
+		int size = curMesh.Vertices.size();
+
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+
+			verticess.push_back((float)curMesh.Vertices[j].Position.X);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indices[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &floorVAO5);
+		glGenBuffers(1, &floorVBO5);
+		glGenBuffers(1, &floorEBO5);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO5);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO5);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(floorVAO5);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(floorVAO5);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVBO5);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, floorEBO5);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+
+}
+
+
+
+float verticesbk[82000];
+unsigned int indicesbk[72000];
+GLuint backgroundVAO, backgroundVBO, backgroundEBO;
+
+void renderBackground()
+{
+	// initialize (if necessary)
+	if (backgroundVAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\background.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+
+			verticess.push_back((float)curMesh.Vertices[j].Position.X);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Position.Z);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.X);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Y);
+			verticess.push_back((float)curMesh.Vertices[j].Normal.Z);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.X);
+			verticess.push_back((float)curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			verticesbk[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesbk[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &backgroundVAO);
+		glGenBuffers(1, &backgroundVBO);
+		glGenBuffers(1, &backgroundEBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, backgroundVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verticesbk), verticesbk, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, backgroundEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesbk), &indicesbk, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(backgroundVAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(backgroundVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, backgroundVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, backgroundEBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
+
+
+
+
+
+
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		pCamera->ProcessKeyboard(FORWARD, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		pCamera->ProcessKeyboard(BACKWARD, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		pCamera->ProcessKeyboard(LEFT, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		pCamera->ProcessKeyboard(RIGHT, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+		pCamera->ProcessKeyboard(UP, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+		pCamera->ProcessKeyboard(DOWN, (float)deltaTime);
+
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+		pCamera->Reset(width, height);
+
+	}
+}
+
+
+
+
+
+
+
+
+
+
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+// ---------------------------------------------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	pCamera->Reshape(width, height);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	pCamera->MouseControl((float)xpos, (float)ypos);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yOffset)
+{
+	pCamera->ProcessMouseScroll((float)yOffset);
+}
