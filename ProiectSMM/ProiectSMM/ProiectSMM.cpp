@@ -82,11 +82,15 @@ void renderWallRoom(const Shader& shader);
 void renderBackground1(const Shader& shader);
 void renderBackground2(const Shader& shader);
 void renderDino1(const Shader& shader);
+void renderTree(const Shader& shader);
+void renderHawk(const Shader& shader);
 
 //objects
 void renderFloor();
 void renderBackground();
 void renderDino1();
+void renderTree();
+void renderHawk();
 
 //room
 void renderWall1();
@@ -171,6 +175,8 @@ int main(int argc, char** argv)
 	unsigned int floorTexture = CreateTexture(strExePath + "\\floor.jpg");
 	unsigned int wallTexture = CreateTexture(strExePath + "\\wall.jpg");
 	unsigned int dino1 = CreateTexture(strExePath + "\\tietu.jpg");
+	unsigned int treeTexture = CreateTexture(strExePath + "\\tree.jpg");
+	unsigned int hawkTexture = CreateTexture(strExePath + "\\10025_Hawk_v1_Diffuse.jpg");
 
 
 	// configure depth map FBO
@@ -284,6 +290,28 @@ int main(int argc, char** argv)
 		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, treeTexture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderTree(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, hawkTexture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderHawk(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 
 		// reset viewport
@@ -316,7 +344,7 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		glDisable(GL_CULL_FACE);
 		renderWallRoom(shadowMappingShader);
-		
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, wallTexture);
 		glActiveTexture(GL_TEXTURE1);
@@ -340,6 +368,20 @@ int main(int argc, char** argv)
 		glDisable(GL_CULL_FACE);
 		renderDino1(shadowMappingShader);
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, treeTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderTree(shadowMappingShader);
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, hawkTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderHawk(shadowMappingShader);
 		//end
 
 
@@ -510,6 +552,48 @@ void renderDino1(const Shader& shader)
 
 
 }
+
+
+void renderTree(const Shader& shader)
+{
+	//tree 1
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-39.0f, -0.6f, 13.4f));
+	model = glm::scale(model, glm::vec3(0.1f));
+	shader.SetMat4("model", model);
+	renderTree();
+
+	// tree 2
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-58.8f, -0.6f, 13.4f));
+	model = glm::scale(model, glm::vec3(0.1f));
+	model = glm::rotate(model, glm::radians(20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.SetMat4("model", model);
+	renderTree();
+
+}
+
+
+void renderHawk(const Shader& shader)
+{
+
+	//hawk
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-56.2f, 9.8f, 9.f));
+	model = glm::scale(model, glm::vec3(0.10f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(-1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::rotate(model, glm::radians(180.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::rotate(model, glm::radians(160.f), glm::vec3(0.0f, 0.0f, -1.0f));
+	shader.SetMat4("model", model);
+	renderHawk();
+}
+
 
 unsigned int planeVAO = 0;
 void renderFloor()
@@ -1493,6 +1577,173 @@ void renderDino1()
 
 
 
+unsigned int indicesT[72000];
+objl::Vertex verT[82000];
+
+GLuint treeVAO, treeVBO, treeEBO;
+
+void renderTree()
+{
+	// initialize (if necessary)
+	if (treeVAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\acacia.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verT[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesT[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &treeVAO);
+		glGenBuffers(1, &treeVBO);
+		glGenBuffers(1, &treeEBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, treeVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verT), verT, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, treeEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesT), &indicesT, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(treeVAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(treeVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, treeVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, treeEBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
+
+
+
+unsigned int indiceshawk[720000];
+objl::Vertex verhawk[820000];
+GLuint  hawkVAO, hawkVBO, hawkEBO;
+
+void renderHawk()
+{
+	// initialize (if necessary)
+	if (hawkVAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\10025_Hawk_v1_iterations-2.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verhawk[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indiceshawk[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &hawkVAO);
+		glGenBuffers(1, &hawkVBO);
+		glGenBuffers(1, &hawkEBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, hawkVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verhawk), verhawk, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, hawkEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indiceshawk), &indiceshawk, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(hawkVAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(hawkVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, hawkVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, hawkEBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
 
 
 
