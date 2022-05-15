@@ -87,6 +87,7 @@ void renderHawk(const Shader& shader);
 void renderStatue1(const Shader& shader);
 void renderStatue2(const Shader& shader);
 void renderGrass(const Shader& shader);
+void renderStork(const Shader& shader);
 
 
 //objects
@@ -98,6 +99,7 @@ void renderHawk();
 void renderStatue1();
 void renderStatue2();
 void renderGrass();
+void renderStork();
 
 //room
 void renderWall1();
@@ -187,7 +189,7 @@ int main(int argc, char** argv)
 	unsigned int statue1Texture = CreateTexture(strExePath + "\\DavidFixedDiff.jpg");
 	unsigned int statue2Texture = CreateTexture(strExePath + "\\statue.jpg");
 	unsigned int GrassTexture = CreateTexture(strExePath + "\\greenGrass.jpg");
-
+	unsigned int storkTexture = CreateTexture(strExePath + "\\stork.jpg");
 	// configure depth map FBO
 	// -----------------------
 	const unsigned int SHADOW_WIDTH = 4098, SHADOW_HEIGHT = 4098;
@@ -355,6 +357,17 @@ int main(int argc, char** argv)
 		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, storkTexture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderStork(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 		// reset viewport
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
@@ -446,6 +459,13 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		glDisable(GL_CULL_FACE);
 		renderGrass(shadowMappingShader);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, storkTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderStork(shadowMappingShader);
 
 		//end
 
@@ -707,6 +727,23 @@ void renderGrass(const Shader& shader)
 
 	shader.SetMat4("model", model);
 	renderGrass();
+}
+
+
+void renderStork(const Shader& shader)
+{
+
+	//stork
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-34.0f, -0.3f, 12.9f));
+	model = glm::scale(model, glm::vec3(0.12f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(-1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.0f, 0.0f, -1.0f));
+	model = glm::rotate(model, glm::radians(50.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	shader.SetMat4("model", model);
+	renderStork();
 }
 
 
@@ -2112,6 +2149,89 @@ void renderGrass()
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }
+
+
+unsigned int indicesStork[720000];
+objl::Vertex verStork[820000];
+GLuint storkVAO, storkVBO, storkEBO;
+void renderStork()
+{
+	// initialize (if necessary)
+	if (storkVAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\stork.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verStork[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesStork[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &storkVAO);
+		glGenBuffers(1, &storkVBO);
+		glGenBuffers(1, &storkEBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, storkVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verStork), verStork, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, storkEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesStork), &indicesStork, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(storkVAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(storkVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, storkVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, storkEBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
 
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
