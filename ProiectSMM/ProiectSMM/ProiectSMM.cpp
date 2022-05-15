@@ -84,6 +84,10 @@ void renderBackground2(const Shader& shader);
 void renderDino1(const Shader& shader);
 void renderTree(const Shader& shader);
 void renderHawk(const Shader& shader);
+void renderStatue1(const Shader& shader);
+void renderStatue2(const Shader& shader);
+void renderGrass(const Shader& shader);
+
 
 //objects
 void renderFloor();
@@ -91,6 +95,9 @@ void renderBackground();
 void renderDino1();
 void renderTree();
 void renderHawk();
+void renderStatue1();
+void renderStatue2();
+void renderGrass();
 
 //room
 void renderWall1();
@@ -177,7 +184,9 @@ int main(int argc, char** argv)
 	unsigned int dino1 = CreateTexture(strExePath + "\\tietu.jpg");
 	unsigned int treeTexture = CreateTexture(strExePath + "\\tree.jpg");
 	unsigned int hawkTexture = CreateTexture(strExePath + "\\10025_Hawk_v1_Diffuse.jpg");
-
+	unsigned int statue1Texture = CreateTexture(strExePath + "\\DavidFixedDiff.jpg");
+	unsigned int statue2Texture = CreateTexture(strExePath + "\\statue.jpg");
+	unsigned int GrassTexture = CreateTexture(strExePath + "\\greenGrass.jpg");
 
 	// configure depth map FBO
 	// -----------------------
@@ -312,6 +321,39 @@ int main(int argc, char** argv)
 		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, statue1Texture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderStatue1(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, statue2Texture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderStatue2(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, GrassTexture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderGrass(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
 		// reset viewport
@@ -382,6 +424,29 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		glDisable(GL_CULL_FACE);
 		renderHawk(shadowMappingShader);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, statue1Texture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderStatue1(shadowMappingShader);
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, statue2Texture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderStatue2(shadowMappingShader);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, GrassTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderGrass(shadowMappingShader);
+
 		//end
 
 
@@ -592,6 +657,56 @@ void renderHawk(const Shader& shader)
 	model = glm::rotate(model, glm::radians(160.f), glm::vec3(0.0f, 0.0f, -1.0f));
 	shader.SetMat4("model", model);
 	renderHawk();
+}
+
+
+void renderStatue1(const Shader& shader)
+{
+
+	//statue1
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(12.7f, -0.4f, 13.9f));
+	model = glm::scale(model, glm::vec3(0.015f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(-1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::rotate(model, glm::radians(100.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	shader.SetMat4("model", model);
+	renderStatue1();
+}
+
+void renderStatue2(const Shader& shader)
+{
+
+	//statue2
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(12.7f, -0.5f, -11.9f));
+	model = glm::scale(model, glm::vec3(0.042f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(-1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.f), glm::vec3(0.0f, 0.0f, -1.0f));
+	model = glm::rotate(model, glm::radians(50.f), glm::vec3(0.0f, 0.0f, 1.0f));
+	shader.SetMat4("model", model);
+	renderStatue2();
+}
+
+
+
+void renderGrass(const Shader& shader)
+{
+
+	//Grass
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-49.42f, -0.9f, 20.6f));
+	model = glm::scale(model, glm::vec3(6.f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+
+	shader.SetMat4("model", model);
+	renderGrass();
 }
 
 
@@ -1747,6 +1862,256 @@ void renderHawk()
 
 
 
+unsigned int indicesstatue1[720000];
+objl::Vertex verstatue1[820000];
+GLuint statue1VAO, statue1VBO, statue1EBO;
+
+void renderStatue1()
+{
+	// initialize (if necessary)
+	if (statue1VAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\12330_Statue_v1_L2.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verstatue1[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesstatue1[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &statue1VAO);
+		glGenBuffers(1, &statue1VBO);
+		glGenBuffers(1, &statue1EBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, statue1VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verstatue1), verstatue1, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, statue1EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesstatue1), &indicesstatue1, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(statue1VAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(statue1VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, statue1VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, statue1EBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
+
+
+
+unsigned int indicesstatue2[720000];
+objl::Vertex verstatue2[820000];
+GLuint statue2VAO, statue2VBO, statue2EBO;
+
+void renderStatue2()
+{
+	// initialize (if necessary)
+	if (statue2VAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\12328_Statue_v1_L2.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verstatue2[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesstatue2[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &statue2VAO);
+		glGenBuffers(1, &statue2VBO);
+		glGenBuffers(1, &statue2EBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, statue2VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verstatue2), verstatue2, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, statue2EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesstatue2), &indicesstatue2, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(statue2VAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(statue2VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, statue2VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, statue2EBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
+
+
+unsigned int indicesGr[72000];
+objl::Vertex verGr[82000];
+GLuint GrassVAO, GrassVBO, GrassEBO;
+
+void renderGrass()
+{
+	// initialize (if necessary)
+	if (GrassVAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\background.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verGr[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesGr[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &GrassVAO);
+		glGenBuffers(1, &GrassVBO);
+		glGenBuffers(1, &GrassEBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, GrassVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verGr), verGr, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GrassEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesGr), &indicesGr, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(GrassVAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(GrassVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, GrassVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GrassEBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
 
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
