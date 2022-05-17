@@ -1,209 +1,245 @@
 ﻿  ProiectSMM.cpp
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\OBJ_Loader.h(652,25): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\OBJ_Loader.h(689,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\OBJ_Loader.h(695,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\OBJ_Loader.h(949,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(253,21): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\OBJ_Loader.h(652,25): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\OBJ_Loader.h(689,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\OBJ_Loader.h(695,23): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\OBJ_Loader.h(949,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(264,21): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(254,21): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(265,21): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(962,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(967,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(979,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(984,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(990,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(992,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1080,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1085,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1097,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1102,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1108,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1110,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1041,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1046,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1058,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1063,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1069,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1071,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1159,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1164,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1176,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1181,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1187,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1189,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1121,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1126,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1138,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1143,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1149,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1151,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1239,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1244,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1256,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1261,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1267,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1269,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1199,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1204,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1216,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1221,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1227,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1229,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1317,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1322,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1334,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1339,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1345,22): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1347,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1282,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1294,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1299,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1305,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1307,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1400,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1412,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1417,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1423,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1425,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1358,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1370,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1375,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1381,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1383,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1476,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1488,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1493,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1499,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1501,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1435,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1447,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1452,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1458,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1460,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1553,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1565,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1570,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1576,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1578,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1511,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1523,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1528,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1534,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1536,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1629,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1641,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1646,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1652,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1654,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1586,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1598,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1603,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1609,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1611,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1704,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1716,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1721,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1727,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1729,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1660,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1672,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1677,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1683,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1685,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1778,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1790,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1795,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1801,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1803,28): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1744,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1756,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1761,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1767,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1769,30): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1862,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1874,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1879,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1885,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1887,30): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1824,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1838,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1843,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1849,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1851,31): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1942,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1956,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1961,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1967,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1969,31): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1909,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1923,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1928,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1934,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1936,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2027,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2041,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2046,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2052,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2054,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(1994,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2008,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2013,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2019,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2021,32): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2112,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2126,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2131,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2137,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2139,32): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2078,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2092,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2097,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2103,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2105,35): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2196,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2210,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2215,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2221,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2223,35): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2163,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2177,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2182,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2188,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2190,35): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2281,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2295,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2300,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2306,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2308,35): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2247,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2261,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2266,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2272,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2274,30): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2365,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2379,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2384,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2390,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2392,30): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2329,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2343,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2348,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2354,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2356,33): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2447,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2461,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2466,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2472,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2474,33): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2411,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2425,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2430,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2436,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2438,32): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2529,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2543,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2548,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2554,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2556,32): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2496,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2510,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2515,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2521,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2523,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2614,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2628,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2633,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2639,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2641,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2588,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2602,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2607,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2613,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2615,30): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2706,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2720,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2725,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2731,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2733,30): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
           with
           [
               _Ty=float
           ]
-  ProiectSMM.vcxproj -> C:\Users\idu_s\Desktop\Proiect-SMM2\ProiectSMM\Debug\ProiectSMM.exe
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2789,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2803,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2808,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2814,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2816,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2871,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2885,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2890,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2896,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2898,31): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(2998,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3012,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3017,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3023,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3025,31): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3096,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3110,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3115,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3121,21): warning C4018: '<': signed/unsigned mismatch
+E:\Documents\Proiect-SMM\ProiectSMM\ProiectSMM\ProiectSMM.cpp(3123,29): warning C4244: '=': conversion from '_Ty' to 'unsigned int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+  ProiectSMM.vcxproj -> E:\Documents\Proiect-SMM\ProiectSMM\Debug\ProiectSMM.exe
