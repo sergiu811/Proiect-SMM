@@ -3064,7 +3064,7 @@ void renderSkull(const Shader& shader)
 
 	glm::mat4 model;
 	model = glm::mat4();
-	model = glm::translate(model, glm::vec3(-60.5f, 5.6f, 0.f));
+	model = glm::translate(model, glm::vec3(-60.5f, 5.4f, 0.f));
 	model = glm::scale(model, glm::vec3(2.f));
 	model = glm::rotate(model, glm::radians(125.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(20.0f), glm::vec3(0.0f, 0.0f, -1.0f));
