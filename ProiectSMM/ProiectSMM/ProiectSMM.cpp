@@ -95,6 +95,8 @@ void renderChair(const Shader& shader);
 void renderSmallDino(const Shader& shader);
 void renderpedastal(const Shader& shader);
 void renderSkull(const Shader& shader);
+void renderPlant(const Shader& shader);
+
 
 //objects
 void renderFloor();
@@ -113,6 +115,7 @@ void renderChair();
 void renderSmallDino();
 void renderpedastal();
 void renderSkull();
+void renderPlant();
 
 
 //room
@@ -211,6 +214,7 @@ int main(int argc, char** argv)
 	unsigned int smallDino = CreateTexture(strExePath + "\\Ingenia_diffuse.jpg");
 	unsigned int pedastalTexture = CreateTexture(strExePath + "\\wall.jpg");
 	unsigned int skullTexture = CreateTexture(strExePath + "\\TriceratopsSkullDiffuse.jpg");
+	unsigned int plantTexture = CreateTexture(strExePath + "\\10432_Aloe_Plant_v1_Diffuse.jpg");
 
 	// configure depth map FBO
 	// -----------------------
@@ -467,6 +471,17 @@ int main(int argc, char** argv)
 		glCullFace(GL_BACK);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, plantTexture);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		renderPlant(shadowMappingDepthShader);
+		glCullFace(GL_BACK);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 		// reset viewport
 		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
@@ -615,6 +630,13 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, depthMap);
 		glDisable(GL_CULL_FACE);
 		renderSkull(shadowMappingShader);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, plantTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glDisable(GL_CULL_FACE);
+		renderPlant(shadowMappingShader);
 
 
 		//end
@@ -1018,6 +1040,28 @@ void renderSmallDino(const Shader& shader)
 	shader.SetMat4("model", model);
 	renderSmallDino();
 }
+
+void renderPlant(const Shader& shader)
+{
+	//plant
+
+	glm::mat4 model;
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-22.2f, -0.6f, 9.4f));
+	model = glm::scale(model, glm::vec3(0.15f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+	shader.SetMat4("model", model);
+	renderPlant();
+
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(-22.2f, -0.6f, -9.4f));
+	model = glm::scale(model, glm::vec3(0.15f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	shader.SetMat4("model", model);
+	renderPlant();
+}
+
 
 
 
@@ -3149,6 +3193,90 @@ void renderSkull()
 	glBindVertexArray(skullVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, skullVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skullEBO);
+	int indexArraySize;
+	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
+	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
+
+unsigned int indicesPlant[72000];
+objl::Vertex verPLant[82000];
+
+GLuint plantVAO, plantVBO, plantEBO;
+
+void renderPlant()
+{
+	// initialize (if necessary)
+	if (plantVAO == 0)
+	{
+
+		std::vector<float> verticess;
+		std::vector<float> indicess;
+
+
+
+		Loader.LoadFile("..\\OBJ\\10432_Aloe_Plant_v1_max2008_it2.obj");
+		objl::Mesh curMesh = Loader.LoadedMeshes[0];
+		int size = curMesh.Vertices.size();
+		objl::Vertex v;
+		for (int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			v.Position.X = (float)curMesh.Vertices[j].Position.X;
+			v.Position.Y = (float)curMesh.Vertices[j].Position.Y;
+			v.Position.Z = (float)curMesh.Vertices[j].Position.Z;
+			v.Normal.X = (float)curMesh.Vertices[j].Normal.X;
+			v.Normal.Y = (float)curMesh.Vertices[j].Normal.Y;
+			v.Normal.Z = (float)curMesh.Vertices[j].Normal.Z;
+			v.TextureCoordinate.X = (float)curMesh.Vertices[j].TextureCoordinate.X;
+			v.TextureCoordinate.Y = (float)curMesh.Vertices[j].TextureCoordinate.Y;
+
+
+			verPLant[j] = v;
+		}
+		for (int j = 0; j < verticess.size(); j++)
+		{
+			vertices[j] = verticess.at(j);
+		}
+
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+
+			indicess.push_back((float)curMesh.Indices[j]);
+
+		}
+		for (int j = 0; j < curMesh.Indices.size(); j++)
+		{
+			indicesPlant[j] = indicess.at(j);
+		}
+
+		glGenVertexArrays(1, &plantVAO);
+		glGenBuffers(1, &plantVBO);
+		glGenBuffers(1, &plantEBO);
+		// fill buffer
+		glBindBuffer(GL_ARRAY_BUFFER, plantVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(verPLant), verPLant, GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, plantEBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesPlant), &indicesPlant, GL_DYNAMIC_DRAW);
+		// link vertex attributes
+		glBindVertexArray(plantVAO);
+		glEnableVertexAttribArray(0);
+
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	// render Cube
+	glBindVertexArray(plantVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, plantVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, plantEBO);
 	int indexArraySize;
 	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &indexArraySize);
 	glDrawElements(GL_TRIANGLES, indexArraySize / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
